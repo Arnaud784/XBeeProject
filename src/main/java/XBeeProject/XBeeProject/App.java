@@ -1,8 +1,13 @@
 package XBeeProject.XBeeProject;
 
 import com.rapplogic.xbee.api.ApiId;
+import com.rapplogic.xbee.api.AtCommand;
+import com.rapplogic.xbee.api.AtCommandResponse;
+import com.rapplogic.xbee.api.RemoteAtRequest;
 import com.rapplogic.xbee.api.XBee;
+import com.rapplogic.xbee.api.XBeeAddress16;
 import com.rapplogic.xbee.api.XBeeException;
+import com.rapplogic.xbee.api.XBeeRequest;
 import com.rapplogic.xbee.api.XBeeResponse;
 import com.rapplogic.xbee.api.wpan.RxResponseIoSample;
 import com.rapplogic.xbee.api.zigbee.ZNetRxIoSampleResponse;
@@ -33,13 +38,46 @@ public class App
 	    		if (response.getApiId() == ApiId.ZNET_IO_SAMPLE_RESPONSE) {
 	    			ZNetRxIoSampleResponse ioSample = (ZNetRxIoSampleResponse) response;
 	    			
-	    			System.out.println("Received a sample from " + ioSample.getRemoteAddress64());
-
-	    			System.out.println("Analog D0 (pin 20) 10-bit reading is " + ioSample.getAnalog0());
+	    			System.out.println("----- " +ioSample.getRemoteAddress64()+" : " + ioSample.getAnalog0());
 	    			//System.out.println("Digital D4 (pin 11) is " + (ioSample.isD4On() ? "on" : "off"));
 	    			
 	    			CoSQL connexion = new CoSQL();
 	    			connexion.Enregistrer(ioSample.getRemoteAddress64().toString(),ioSample.getAnalog0());
+	    			
+	    			if(ioSample.getAnalog0()<400) {
+	    				try {
+	    					AtCommand request2 = new AtCommand("D0", 5);
+	    					AtCommandResponse response2 = (AtCommandResponse) xbee.sendSynchronous(request2, 5000);
+	    				} catch (Exception e) {
+	    				    // no response was received in the allotted time
+	    					System.out.println("/!\\ error at if getAnalog<400 local : "+e);
+	    				}
+	    				try {
+	    					RemoteAtRequest request = new RemoteAtRequest(ioSample.getRemoteAddress64(), "D1", new int [] {0x05} );
+		    		           xbee.sendAsynchronous(request);
+	    				} catch (Exception e) {
+	    				    // no response was received in the allotted time
+	    					System.out.println("/!\\ error at if getAnalog<400 remote : "+e);
+	    				}
+	    			}
+	    			else {
+	    				try {
+	    					AtCommand request2 = new AtCommand("D0", 0);
+	    					AtCommandResponse response2 = (AtCommandResponse) xbee.sendSynchronous(request2, 5000);
+	    				} catch (Exception e) {
+	    				    // no response was received in the allotted time
+	    					System.out.println("/!\\ error at if getAnalog>=400 local : "+e);
+	    				}
+	    				
+	    				try {
+	    					RemoteAtRequest request = new RemoteAtRequest(ioSample.getRemoteAddress64(), "D1", 0);
+	    		            XBeeResponse rsp = xbee.sendSynchronous(request, 5000);
+	    		            System.out.println("response : "+rsp);
+	    				} catch (Exception e) {
+	    				    // no response was received in the allotted time
+	    					System.out.println("/!\\ error at if getAnalog>=400 remote : "+e);
+	    				}
+	    			}
 	    		}
 	    	}	
     	} catch (XBeeException e) {
