@@ -60,7 +60,7 @@ function addData(chart, label, data) {
 }
 
 function removeData(chart) {
-    chart.data.labels.pop();
+    chart.data.labels.shift();
     chart.data.datasets.forEach((dataset) => {
         dataset.data.shift();
     });
