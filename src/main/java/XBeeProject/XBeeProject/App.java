@@ -70,9 +70,8 @@ public class App
 	    				}
 	    				
 	    				try {
-	    					RemoteAtRequest request = new RemoteAtRequest(ioSample.getRemoteAddress64(), "D1", 0);
-	    		            XBeeResponse rsp = xbee.sendSynchronous(request, 5000);
-	    		            System.out.println("response : "+rsp);
+	    					RemoteAtRequest request = new RemoteAtRequest(ioSample.getRemoteAddress64(), "D1",  new int [] {0x00} );
+	    		            xbee.sendAsynchronous(request);
 	    				} catch (Exception e) {
 	    				    // no response was received in the allotted time
 	    					System.out.println("/!\\ error at if getAnalog>=400 remote : "+e);
@@ -81,7 +80,7 @@ public class App
 	    		}
 	    	}	
     	} catch (XBeeException e) {
-    		
+    		System.out.println(e);
     	}
     	
 		System.out.println("Fin du try");

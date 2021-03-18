@@ -1433,3 +1433,10 @@ com.rapplogic.xbee.api.XBeeException: Could not find port: /dev/tty.usbserial-A6
 	at com.rapplogic.xbee.api.XBee.open(XBee.java:132)
 	at com.rapplogic.xbee.examples.ApiAtExample.<init>(ApiAtExample.java:53)
 	at com.rapplogic.xbee.examples.ApiAtExample.main(ApiAtExample.java:76)
+[main] ERROR com.rapplogic.xbee.examples.ApiAtExample  - at command failed
+com.rapplogic.xbee.api.XBeeException: Could not find port: /dev/tty.usbserial-A6005uPi
+	at com.rapplogic.xbee.SerialPortConnection.openSerialPort(SerialPortConnection.java:94)
+	at com.rapplogic.xbee.SerialPortConnection.openSerialPort(SerialPortConnection.java:61)
+	at com.rapplogic.xbee.api.XBee.open(XBee.java:132)
+	at com.rapplogic.xbee.examples.ApiAtExample.<init>(ApiAtExample.java:53)
+	at com.rapplogic.xbee.examples.ApiAtExample.main(ApiAtExample.java:76)
